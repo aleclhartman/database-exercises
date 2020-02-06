@@ -1,1 +1,1 @@
-repo for database exercise
+repo for database exercises
