@@ -38,8 +38,7 @@ WHERE first_name = 'Irena'
 #Add a condition to the previous query to find everybody with those names who is also male
 SELECT *
 FROM employees
-WHERE (
-	first_name = 'Irena'
+WHERE ( first_name = 'Irena'
 	OR first_name = 'Vidya'
 	OR first_name = 'Maya')
 	AND gender = 'M';
