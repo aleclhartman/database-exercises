@@ -150,8 +150,7 @@ WHERE YEAR(hire_date) BETWEEN 1990 AND 1999
 ORDER BY birth_date, hire_date DESC
 LIMIT 5;
 
-/* Find your query for employees born on Christmas and hired in the 90s
-Update it to find just the first 5 employees */
+/* Update the query to find the tenth page of results */
 SELECT first_name, last_name
 FROM employees
 WHERE YEAR(hire_date) BETWEEN 1990 AND 1999
