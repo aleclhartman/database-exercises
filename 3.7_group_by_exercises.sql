@@ -241,6 +241,15 @@ FROM employees
 WHERE last_name LIKE 'e%e'
 GROUP BY first_name, last_name;
 
+/* Update your previous query to now find unique combinations of first and last name where the last name starts and ends with 'E' - different approach */
+SELECT
+	CONCAT(first_name,
+	" ",
+	last_name) as full_name
+FROM employees
+WHERE last_name LIKE 'e%e'
+GROUP BY first_name, last_name;
+
 /* Find the unique last names with a 'q' but not 'qu' */
 SELECT
 	last_name
@@ -252,8 +261,10 @@ GROUP BY last_name;
 /* Add a COUNT() to your results and use ORDER BY to make it easier to find employees whose unusual name is shared with others. */
 SELECT
 	last_name,
-	COUNT(*)
+	COUNT(*) AS count
 FROM employees
+	WHERE last_name LIKE '%q%'
+	AND last_name NOT LIKE '%qu%'
 GROUP BY last_name;
 
 /* Update your query for 'Irena', 'Vidya', or 'Maya'. Use COUNT(*) and GROUP BY to find the number of employees for each gender with those names */
@@ -273,13 +284,7 @@ SELECT
 		SUBSTR(birth_date, 6, 2),
 		SUBSTR(birth_date, 3, 2)
 			) AS username,
-	COUNT(CONCAT(
-		LOWER(LEFT(first_name, 1)),
-		LOWER(LEFT(last_name, 4)),
-		"_",
-		SUBSTR(birth_date, 6, 2),
-		SUBSTR(birth_date, 3, 2)
-			)) AS count_unique_username
+	COUNT(*) AS count
 FROM employees
 GROUP BY CONCAT(
 		LOWER(LEFT(first_name, 1)),
@@ -296,5 +301,31 @@ ORDER BY COUNT(CONCAT(
 		SUBSTR(birth_date, 3, 2)
 			)) DESC;
 
+/* Bonus: how many duplicate usernames are there? */
+SELECT
+	CONCAT(
+		LOWER(LEFT(first_name, 1)),
+		LOWER(LEFT(last_name, 4)),
+		"_",
+		SUBSTR(birth_date, 6, 2),
+		SUBSTR(birth_date, 3, 2)
+			) AS username,
+	COUNT(*) AS count
+FROM employees
+GROUP BY CONCAT(
+		LOWER(LEFT(first_name, 1)),
+		LOWER(LEFT(last_name, 4)),
+		"_",
+		SUBSTR(birth_date, 6, 2),
+		SUBSTR(birth_date, 3, 2)
+			)
+HAVING count > 1
+ORDER BY COUNT(CONCAT(
+		LOWER(LEFT(first_name, 1)),
+		LOWER(LEFT(last_name, 4)),
+		"_",
+		SUBSTR(birth_date, 6, 2),
+		SUBSTR(birth_date, 3, 2)
+			)) DESC;
 
 
