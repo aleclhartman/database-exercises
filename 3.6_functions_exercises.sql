@@ -172,3 +172,25 @@ SELECT
 	birth_date
 FROM employees
 LIMIT 10;
+
+/* Find the number of years each employee has been with the company */
+SELECT
+	*,
+	CURDATE(),
+	(YEAR(CURDATE()) - YEAR(hire_date)) AS years_employed
+FROM employees
+LIMIT 10;
+
+/* Find out how old each employee was when they were hired. */
+SELECT
+	*,
+	(YEAR(hire_date) - YEAR(birth_date)) AS age_when_hiredc
+FROM employees
+LIMIT 10;
+
+/* Find the most recent date in the dataset. What does this tell you? Does this
+  explain the distribution of employee ages? */
+SELECT
+	MIN(hire_date),
+	MAX(hire_date)
+FROM employees;
