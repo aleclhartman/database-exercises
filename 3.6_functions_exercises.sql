@@ -192,5 +192,8 @@ LIMIT 10;
   explain the distribution of employee ages? */
 SELECT
 	MIN(hire_date),
-	MAX(hire_date)
+	MAX(hire_date),
+	MIN(birth_date),
+	MAX(birth_date),
+	ROUND(AVG(YEAR(CURDATE()) - YEAR(birth_date)), 2) AS avg_years_old
 FROM employees;
