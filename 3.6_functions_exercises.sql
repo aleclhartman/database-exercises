@@ -184,7 +184,7 @@ LIMIT 10;
 /* Find out how old each employee was when they were hired. */
 SELECT
 	*,
-	(YEAR(hire_date) - YEAR(birth_date)) AS age_when_hiredc
+	(YEAR(hire_date) - YEAR(birth_date)) AS age_when_hired
 FROM employees
 LIMIT 10;
 
