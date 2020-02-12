@@ -30,46 +30,44 @@ GROUP BY roles.name;
 USE employees;
 
 /* write a query that shows each department along with the name of the current manager for that department. */
-SELECT d.dept_name AS department_name, CONCAT(e.first_name, ' ', e.last_name) AS department_manager
+SELECT d.dept_name AS "Department Name", CONCAT(e.first_name, ' ', e.last_name) AS "Department Manager"
 FROM departments AS d
 JOIN dept_manager AS dm ON d.dept_no = dm.dept_no
 JOIN employees AS e ON e.emp_no = dm.emp_no
-WHERE dm.to_date = '9999-01-01'
-ORDER BY department_name;
+WHERE dm.to_date > CURDATE()
+ORDER BY `Department Name`;
 
 /* Find the name of all departments currently managed by women. */
-SELECT d.dept_name AS department_name, CONCAT(e.first_name, ' ', e.last_name) AS department_manager
+SELECT d.dept_name AS "Department Name", CONCAT(e.first_name, ' ', e.last_name) AS "Manager Name"
 FROM departments AS d
 JOIN dept_manager AS dm ON d.dept_no = dm.dept_no
 JOIN employees AS e ON e.emp_no = dm.emp_no
-WHERE dm.to_date = '9999-01-01' AND e.gender = 'F'
-ORDER BY department_name;
+WHERE dm.to_date > CURDATE() AND e.gender = 'F'
+ORDER BY `Department Name`;
 
 /* Find the current titles of employees currently working in the Customer Service department. */
-SELECT t.title AS title, COUNT(t.title) AS count
+SELECT t.title AS "Title", COUNT(t.title) AS "Count"
 FROM departments AS d
 JOIN dept_emp AS de ON d.dept_no = de.dept_no
 JOIN titles AS t ON t.emp_no = de.emp_no
-WHERE d.dept_name = 'Customer Service' AND t.to_date = '9999-01-01' AND de.to_date = '9999-01-01'
-GROUP BY t.title;
+WHERE d.dept_name = 'Customer Service' AND t.to_date > CURDATE() AND de.to_date > CURDATE()
+GROUP BY `Title`;
 
 /* Find the current salary of all current managers. */
-SELECT d.dept_name AS department_name, CONCAT(e.first_name, ' ', e.last_name) AS name, s.salary AS salary
+SELECT d.dept_name AS "Department Name", CONCAT(e.first_name, ' ', e.last_name) AS "Name", s.salary AS "Salary"
 FROM departments AS d
 JOIN dept_manager AS dm ON d.dept_no = dm.dept_no
 JOIN employees AS e ON e.emp_no = dm.emp_no
 JOIN salaries AS s ON s.emp_no = dm.emp_no
-WHERE dm.to_date = '9999-01-01' AND s.to_date = '9999-01-01'
+WHERE dm.to_date > CURDATE() AND s.to_date > CURDATE()
 ORDER BY d.dept_name;
 
 /* Find the number of employees in each department. */
-SELECT d.dept_no AS dept_no, d.dept_name AS dept_name, COUNT(e.emp_no) AS num_employees
+SELECT d.dept_no AS dept_no, d.dept_name AS dept_name, COUNT(de.emp_no) AS num_employees
 FROM departments AS d
 JOIN dept_emp AS de ON d.dept_no = de.dept_no
-JOIN employees AS e ON e.emp_no = de.emp_no
-WHERE de.to_date = '9999-01-01'
-GROUP BY d.dept_name
-ORDER BY d.dept_no;
+WHERE de.to_date > CURDATE()
+GROUP BY d.dept_no;
 
 /* Which department has the highest average salary? */
 SELECT d.dept_name AS dept_name, AVG(s.salary) AS average_salary
@@ -77,13 +75,13 @@ FROM departments AS d
 JOIN dept_emp AS de ON d.dept_no = de.dept_no
 JOIN employees AS e ON e.emp_no = de.emp_no
 JOIN salaries AS s ON s.emp_no = de.emp_no
-WHERE de.to_date = '9999-01-01' AND s.to_date = '9999-01-01'
+WHERE de.to_date > CURDATE() AND s.to_date > CURDATE()
 GROUP BY d.dept_name
 ORDER BY AVG(s.salary) DESC
 LIMIT 1;
 
 /* Who is the highest paid employee in the Marketing department? */
-SELECT e.first_name AS first_name, e.last_name AS last_name
+SELECT first_name, last_name
 FROM employees AS e
 JOIN salaries AS s ON e.emp_no = s.emp_no
 JOIN dept_emp AS de ON e.emp_no = de.emp_no
@@ -98,7 +96,7 @@ FROM departments AS d
 JOIN dept_manager AS dm ON d.dept_no = dm.dept_no
 JOIN employees AS e ON e.emp_no = dm.emp_no
 JOIN salaries AS s ON s.emp_no = dm.emp_no
-WHERE dm.to_date = '9999-01-01' AND s.to_date = '9999-01-01'
+WHERE dm.to_date > CURDATE() AND s.to_date > CURDATE()
 ORDER BY s.salary DESC
 LIMIT 1;
 
@@ -109,7 +107,7 @@ JOIN dept_emp AS de ON e.emp_no = de.emp_no
 JOIN departments AS d ON d.dept_no = de.dept_no
 JOIN dept_manager AS dm ON dm.dept_no = de.dept_no
 LEFT JOIN employees AS me ON me.emp_no = dm.emp_no
-WHERE de.to_date = '9999-01-01' AND dm.to_date = '9999-01-01'
+WHERE de.to_date > CURDATE() AND dm.to_date > CURDATE()
 ORDER BY d.dept_name, employee_name;
 
 /* Find the highest paid employee in each department. */
@@ -118,6 +116,6 @@ FROM employees AS e
 JOIN dept_emp AS de ON e.emp_no = de.emp_no
 JOIN departments AS d ON d.dept_no = de.dept_no
 JOIN  salaries AS s ON e.emp_no = s.emp_no
-WHERE s.to_date = '9999-01-01' AND de.to_date = '9999-01-01'
+WHERE s.to_date > CURDATE() AND de.to_date > CURDATE()
 GROUP BY d.dept_name
 LIMIT 9;
