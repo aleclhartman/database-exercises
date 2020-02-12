@@ -103,11 +103,12 @@ ORDER BY s.salary DESC
 LIMIT 1;
 
 /* Find the names of all current employees, their department name, and their current manager's name. */
-SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name, d.dept_name AS department_name, CONCAT(e.first_name, ' ', e.last_name) AS manager_name
+SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name, d.dept_name AS department_name, CONCAT(me.first_name, ' ', me.last_name) AS manager_name
 FROM employees AS e
 JOIN dept_emp AS de ON e.emp_no = de.emp_no
 JOIN departments AS d ON d.dept_no = de.dept_no
 JOIN dept_manager AS dm ON dm.dept_no = de.dept_no
+LEFT JOIN employees AS me ON me.emp_no = dm.emp_no
 WHERE de.to_date = '9999-01-01' AND dm.to_date = '9999-01-01'
-ORDER BY d.dept_name;
+ORDER BY d.dept_name, employee_name;
 
