@@ -112,3 +112,12 @@ LEFT JOIN employees AS me ON me.emp_no = dm.emp_no
 WHERE de.to_date = '9999-01-01' AND dm.to_date = '9999-01-01'
 ORDER BY d.dept_name, employee_name;
 
+/* Find the highest paid employee in each department. */
+SELECT d.dept_name, MAX(s.salary) AS highest_salary
+FROM employees AS e
+JOIN dept_emp AS de ON e.emp_no = de.emp_no
+JOIN departments AS d ON d.dept_no = de.dept_no
+JOIN  salaries AS s ON e.emp_no = s.emp_no
+WHERE s.to_date = '9999-01-01' AND de.to_date = '9999-01-01'
+GROUP BY d.dept_name
+LIMIT 9;
