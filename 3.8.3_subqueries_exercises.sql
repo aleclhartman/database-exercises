@@ -63,31 +63,45 @@ SELECT e.first_name, e.last_name, s.salary
 FROM salaries AS s
 JOIN employees AS e ON s.emp_no = e.emp_no
 WHERE salary > (
-	SELECT avg_salary.salary AS salary
-	FROM (
-		SELECT AVG(salary) AS salary
-		FROM salaries
-		) AS avg_salary
+	SELECT AVG(salary)
+	FROM salaries
 	)
 AND to_date > CURDATE();
-	
-/* How many current salaries are within 1 standard deviation of the highest salary? What percentage of all salaries is this? */
+
+/* Ryan's solution */
+SELECT first_name, last_name, salary
+FROM employees
+JOIN salaries USING(emp_no)
+WHERE salary > (
+	SELECT AVG(salary)
+	FROM salaries
+	)
+AND to_date > CURDATE();
+
+/* How many current salaries are within 1 standard deviation of the highest salary? */
 SELECT COUNT(*) AS current_salaries
 FROM salaries
 WHERE salary >= (
 	SELECT MAX(salary) -
 		(
-		SELECT STD(salary)
-		FROM salaries
-		)
-	FROM salaries
-	)
-AND salary <= (
-	SELECT MAX(salary) +
-		(
-		SELECT STD(salary)
+		SELECT STDDEV(salary)
 		FROM salaries
 		)
 	FROM salaries
 	)
 AND to_date > CURDATE();
+
+/* What percentage of all salaries is this? */
+SELECT (
+	SELECT COUNT(*) AS current_salaries
+	FROM salaries
+	WHERE salary >= (
+	SELECT MAX(salary) -
+			(
+			SELECT STDDEV(salary)
+			FROM salaries
+			)
+		FROM salaries
+	)
+	AND to_date > CURDATE())
+/ (SELECT COUNT(*) FROM salaries WHERE to_date > CURDATE()) AS percent_of_current_salaries;
