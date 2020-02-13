@@ -111,7 +111,7 @@ WHERE de.to_date > CURDATE() AND dm.to_date > CURDATE()
 ORDER BY d.dept_name, employee_name;
 
 /* Find the highest paid employee in each department. */
-SELECT d.dept_name, MAX(s.salary) AS highest_salary
+SELECT d.dept_name, MAX(s.salary)
 FROM employees AS e
 JOIN dept_emp AS de ON e.emp_no = de.emp_no
 JOIN departments AS d ON d.dept_no = de.dept_no
