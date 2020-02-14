@@ -117,31 +117,36 @@ SELECT *
 FROM payment;
 
 /* Find out how the average pay in each department compares to the overall average pay. In order to make the comparison easier, you should use the Z-score for salaries. In terms of salary, what is the best department to work for? The worst? */
-CREATE TEMPORARY TABLE salaries AS
-SELECT d.dept_name, s.salary
+CREATE TEMPORARY TABLE avg_dept_salaries AS
+SELECT d.dept_name AS dept_name, AVG(s.salary) AS salary
+FROM employees.departments AS d
+JOIN employees.dept_emp AS de ON d.dept_no = de.dept_no
+JOIN employees.salaries AS s ON s.emp_no = de.emp_no
+WHERE s.to_date > CURDATE() AND de.to_date > CURDATE()
+GROUP BY d.dept_name;
+
+DESCRIBE avg_dept_salaries;
+
+SELECT *
+FROM avg_dept_salaries;
+
+CREATE TEMPORARY TABLE overall_average AS
+SELECT AVG(s.salary) AS salary
 FROM employees.salaries AS s
-JOIN employees.dept_emp AS de ON s.emp_no = de.emp_no
-JOIN employees.departments AS d ON de.dept_no = d.dept_no;
-
-DESCRIBE salaries;
+WHERE s.to_date > CURDATE();
 
 SELECT *
-FROM salaries;
+FROM overall_average;
 
-CREATE TEMPORARY TABLE dept_salaries AS
-SELECT d.dept_name, s.salary, DISTINCT s.emp_no
+CREATE TEMPORARY TABLE salaries_std AS
+SELECT STD(s.salary) AS salary
 FROM employees.salaries AS s
-JOIN employees.dept_emp AS de ON s.emp_no = de.emp_no
-JOIN employees.departments AS d ON de.dept_no = d.dept_no;
-
-DESCRIBE dept_salaries;
+WHERE s.to_date > CURDATE();
 
 SELECT *
-FROM dept_salaries;
+FROM salaries_std;
 
-DROP TABLE curie_952.dept_salaries;
+SELECT ads.dept_name, (ads.salary - (SELECT salary FROM overall_average)) / (SELECT salary FROM salaries_std) AS salary_z_scores
+FROM avg_dept_salaries AS ads;
 
-USE employees;
 
-SELECT *
-FROM salaries;
