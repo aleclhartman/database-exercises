@@ -117,7 +117,9 @@ SELECT *
 FROM payment;
 
 /* Find out how the average pay in each department compares to the overall average pay. In order to make the comparison easier, you should use the Z-score for salaries. In terms of salary, what is the best department to work for? The worst? */
-CREATE TEMPORARY TABLE avg_dept_salaries AS
+USE curie_952;
+
+CREATE TABLE avg_dept_salaries AS
 SELECT d.dept_name AS dept_name, AVG(s.salary) AS salary
 FROM employees.departments AS d
 JOIN employees.dept_emp AS de ON d.dept_no = de.dept_no
@@ -130,7 +132,7 @@ DESCRIBE avg_dept_salaries;
 SELECT *
 FROM avg_dept_salaries;
 
-CREATE TEMPORARY TABLE overall_average AS
+CREATE TABLE overall_average AS
 SELECT AVG(s.salary) AS salary
 FROM employees.salaries AS s
 WHERE s.to_date > CURDATE();
@@ -138,15 +140,15 @@ WHERE s.to_date > CURDATE();
 SELECT *
 FROM overall_average;
 
-CREATE TEMPORARY TABLE salaries_std AS
-SELECT STD(s.salary) AS salary
+CREATE TABLE salaries_std AS
+SELECT STDDEV(s.salary) AS salary
 FROM employees.salaries AS s
 WHERE s.to_date > CURDATE();
 
 SELECT *
 FROM salaries_std;
 
-SELECT ads.dept_name, (ads.salary - (SELECT salary FROM overall_average)) / (SELECT salary FROM salaries_std) AS salary_z_scores
+SELECT ads.dept_name, ROUND((ads.salary - (SELECT salary FROM overall_average)) / (SELECT salary FROM salaries_std), 6) AS salary_z_scores
 FROM avg_dept_salaries AS ads;
 
 
