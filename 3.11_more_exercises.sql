@@ -95,5 +95,3 @@ SELECT CONCAT(LOWER(first_name), ' ', LOWER(last_name)) AS lowercase_name
 FROM actor;
 
 
-
-
