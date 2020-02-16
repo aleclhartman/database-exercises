@@ -91,7 +91,79 @@ WHERE ci.name = 'Zacatecas' AND ct.name = 'Mexico';
 
 USE sakila;
 
+/* Display the first and last names in all lowercase of all the actors */
 SELECT CONCAT(LOWER(first_name), ' ', LOWER(last_name)) AS lowercase_name
 FROM actor;
 
+/* You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe." */
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name = "Joe";
 
+/* Find all actors whose last name contain the letters "gen" */
+SELECT *
+FROM actor
+WHERE last_name LIKE 'gen%'
+	OR last_name LIKE '%gen%'
+	OR last_name LIKE '%gen';
+	
+/* Find all actors whose last names contain the letters "li". This time, order the rows by last name and first name, in that order. */
+SELECT *
+FROM actor
+WHERE last_name LIKE 'li%'
+	OR last_name LIKE '%li%'
+	OR last_name LIKE 'li%'
+ORDER BY last_name, first_name;
+
+/* Using IN, display the country_id and country columns for the following countries: Afghanistan, Bangladesh, and China */
+SELECT country_id, country
+FROM country
+WHERE country IN ('Afghanistan', 'Bangladesh', 'China');
+
+/* List the last names of all the actors, as well as how many actors have that last name */
+SELECT last_name, COUNT(last_name)
+FROM actor
+GROUP BY last_name;
+
+/* List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors */
+SELECT last_name, COUNT(last_name)
+FROM actor
+GROUP BY last_name
+HAVING COUNT(last_name) > 1;
+
+/* You cannot locate the schema of the address table. Which query would you use to re-create it? */
+DESCRIBE address;
+
+/* Use JOIN to display the first and last names, as well as the address, of each staff member */
+SELECT s.first_name, s.last_name, a.address, a.district
+FROM staff AS s
+JOIN address AS a ON s.address_id = a.address_id;
+
+/* Use JOIN to display the total amount rung up by each staff member in August of 2005. */
+SELECT CONCAT(s.first_name, ' ', s.last_name) AS full_name, SUM(p.amount)
+FROM staff AS s
+JOIN payment AS p ON s.staff_id = p.staff_id
+GROUP BY full_name;
+
+/* List each film and the number of actors who are listed for that film. */
+SELECT f.title, COUNT(fa.actor_id) AS actors
+FROM film AS f
+JOIN film_actor AS fa ON f.film_id = fa.film_id
+GROUP BY f.title;
+
+/* How many copies of the film Hunchback Impossible exist in the inventory system? */
+SELECT f.title, f.film_id, COUNT(i.inventory_id) AS copies
+FROM film AS f
+JOIN inventory AS i ON f.film_id = i.film_id
+WHERE f.title = 'Hunchback Impossible'
+GROUP BY f.film_id;
+
+/* The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters K and Q have also soared in popularity. Use subqueries to display the titles of movies starting with the letters K and Q whose language is English. */
+SELECT title
+FROM film
+WHERE LEFT();
+
+/* Use subqueries to display all actors who appear in the film Alone Trip. */
+SELECT CONCAT(first_name, ' ',last_name)
+FROM actor
+WHERE film_id;
