@@ -164,6 +164,12 @@ FROM film
 WHERE LEFT();
 
 /* Use subqueries to display all actors who appear in the film Alone Trip. */
-SELECT CONCAT(first_name, ' ',last_name)
-FROM actor
-WHERE film_id;
+SELECT CONCAT(a.first_name, ' ',a.last_name) AS actor_name
+FROM actor AS a
+WHERE a.actor_id IN (
+	SELECT fa.actor_id
+	FROM film_actor AS fa
+	WHERE fa.film_id IN (
+		SELECT f.film_id
+		FROM film AS f
+		WHERE f.title = 'Alone Trip'));
