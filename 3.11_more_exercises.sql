@@ -121,12 +121,12 @@ FROM country
 WHERE country IN ('Afghanistan', 'Bangladesh', 'China');
 
 /* List the last names of all the actors, as well as how many actors have that last name */
-SELECT last_name, COUNT(last_name)
+SELECT last_name, COUNT(last_name) AS count
 FROM actor
 GROUP BY last_name;
 
 /* List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors */
-SELECT last_name, COUNT(last_name)
+SELECT last_name, COUNT(last_name) AS count
 FROM actor
 GROUP BY last_name
 HAVING COUNT(last_name) > 1;
@@ -140,9 +140,10 @@ FROM staff AS s
 JOIN address AS a ON s.address_id = a.address_id;
 
 /* Use JOIN to display the total amount rung up by each staff member in August of 2005. */
-SELECT CONCAT(s.first_name, ' ', s.last_name) AS full_name, SUM(p.amount)
+SELECT CONCAT(s.first_name, ' ', s.last_name) AS full_name, SUM(p.amount) AS amount_rung_up
 FROM staff AS s
 JOIN payment AS p ON s.staff_id = p.staff_id
+WHERE p.payment_date LIKE "2005-08-%"
 GROUP BY full_name;
 
 /* List each film and the number of actors who are listed for that film. */
@@ -161,8 +162,12 @@ GROUP BY f.film_id;
 /* The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters K and Q have also soared in popularity. Use subqueries to display the titles of movies starting with the letters K and Q whose language is English. */
 SELECT title
 FROM film
-WHERE LEFT();
-
+WHERE language_id IN (
+	SELECT language_id
+	FROM language
+	WHERE name = 'English')
+AND LEFT(title, 1) IN ('K', 'Q');
+	
 /* Use subqueries to display all actors who appear in the film Alone Trip. */
 SELECT CONCAT(a.first_name, ' ',a.last_name) AS actor_name
 FROM actor AS a
@@ -173,3 +178,75 @@ WHERE a.actor_id IN (
 		SELECT f.film_id
 		FROM film AS f
 		WHERE f.title = 'Alone Trip'));
+
+/* You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers. */
+SELECT CONCAT(first_name, ' ', last_name) AS customer_name, email
+FROM customer
+WHERE address_id IN (
+	SELECT address_id
+	FROM address
+	WHERE city_id IN (
+		SELECT city_id
+		FROM city
+		WHERE country_id IN (
+			SELECT country_id
+			FROM country
+			WHERE country = 'Canada'
+			)
+		)
+	);
+
+SELECT CONCAT(c.first_name, ' ', c.last_name) AS customer_name, c.email
+FROM customer AS c
+JOIN address AS a ON c.address_id = a.address_id
+JOIN city AS ci ON a.city_id = ci.city_id
+JOIN country AS ct ON ci.country_id = ct.country_id
+WHERE ct.country = 'Canada';
+
+/* Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as famiy films. */
+SELECT title
+FROM film
+WHERE film_id IN (
+	SELECT film_id
+	FROM film_category
+	WHERE category_id IN (
+		SELECT category_id
+		FROM category
+		WHERE name = 'Family'
+		)
+	);
+
+SELECT f.title
+FROM film AS f
+JOIN film_category AS fc ON f.film_id = fc.film_id
+JOIN category AS c ON c.category_id = fc.category_id
+WHERE c.name = 'Family';
+
+/* Write a query to display how much business, in dollars, each store brought in. */
+SELECT s.store_id, SUM(p.amount) AS total_business
+FROM payment AS p
+JOIN store AS s ON p.staff_id = s.manager_staff_id
+GROUP BY s.store_id;
+
+/* Write a query to display for each store its store ID, city, and country. */
+SELECT s.store_id, ci.city, ct.country
+FROM store AS s
+JOIN address AS a ON s.address_id = a.address_id
+JOIN city AS ci ON a.city_id = ci.city_id
+JOIN country AS ct ON ci.country_id = ct.country_id;
+
+/* List the top five genres in gross revenue in descending order */
+SELECT c.name, SUM(p.amount) AS gross_revenue
+FROM category AS c
+JOIN film_category AS fc ON c.category_id = fc.category_id
+JOIN inventory AS i ON fc.film_id = i.film_id
+JOIN rental AS r ON i.inventory_id = r.inventory_id
+JOIN payment AS p ON r.rental_id = p.rental_id
+GROUP BY c.name
+ORDER BY gross_revenue DESC
+LIMIT 5;
+
+
+
+
+
