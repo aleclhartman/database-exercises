@@ -438,9 +438,72 @@ FROM staff AS s
 LEFT JOIN address AS a ON s.address_id = a.address_id
 LEFT JOIN city AS c ON a.city_id = c.city_id;
 
+/* What is the average replacement cost of a film? Does this change depending on the rating of the film? */
+SELECT AVG(replacement_cost)
+FROM film;
 
+SELECT rating, AVG(replacement_cost)
+FROM film
+GROUP BY rating;
 
+/* How many different films of each genre are in the database? */
+SELECT c.name, COUNT(fc.film_id) AS count
+FROM category AS c
+JOIN film_category AS fc ON c.category_id = fc.category_id
+GROUP BY c.name;
 
+/* What are the 5 frequently rented films? */
+SELECT f.title, COUNT(rental_id) AS total
+FROM film AS f
+JOIN inventory AS i ON f.film_id = i.film_id
+JOIN rental AS r ON i.inventory_id = r.inventory_id
+GROUP BY f.title
+ORDER BY total DESC
+LIMIT 5;
+
+/* What are the most most profitable films (in terms of gross revenue)? */
+SELECT f.title, SUM(p.amount) AS total
+FROM film AS f
+JOIN inventory AS i ON f.film_id = i.film_id
+JOIN rental AS r ON i.inventory_id = r.inventory_id
+JOIN payment AS p ON r.rental_id = p.rental_id
+GROUP BY f.title
+ORDER BY total DESC
+LIMIT 5;
+
+/* Who is the best customer? */
+SELECT CONCAT(c.last_name, ', ', c.first_name) AS name, SUM(p.amount) AS total
+FROM customer AS c
+JOIN payment AS p ON c.customer_id = p.customer_id
+GROUP BY name
+ORDER BY total DESC
+LIMIT 1;
+
+/* Who are the most popular actors (that have appeared in the most films)? */
+SELECT CONCAT(a.last_name, ', ', a.first_name) AS actor_name, COUNT(f.film_id) AS total
+FROM actor AS a
+JOIN film_actor AS f ON a.actor_id = f.actor_id
+GROUP BY actor_name
+ORDER BY total DESC
+LIMIT 6;
+
+/* What are the sales for each store for each month in 2005? */
+SELECT LEFT(payment_date, 7) AS month, st.store_id, SUM(p.amount) AS sales
+FROM payment AS p
+JOIN staff AS s ON p.staff_id = s.staff_id
+JOIN store AS st ON s.store_id = st.store_id
+WHERE LEFT(payment_date, 7) LIKE '2005%'
+GROUP BY month, st.store_id
+ORDER BY month, store_id;
+
+/* Bonus: Find the film title, customer name, customer phone number, and customer address for all the outstanding DVDs. */
+SELECT f.title, c.last_name, a.phone, a.
+FROM film AS f
+JOIN inventory AS i ON f.film_id = i.film_id
+JOIN store AS s ON i.store_id = s.store_id
+JOIN customer AS c ON s.store_id = c.store_id
+JOIN address AS a ON c.address_id = a.address_id
+WHERE c.active = True;
 
 
 
