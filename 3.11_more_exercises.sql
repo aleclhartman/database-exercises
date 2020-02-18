@@ -375,11 +375,68 @@ FROM payment
 WHERE amount > 5
 LIMIT 1000 OFFSET 999;
 
-/* Select all columns from the customer table, limiting results to those where the zero-based index is between 101-200.
+/* Select all columns from the customer table, limiting results to those where the zero-based index is between 101-200. */
+SELECT *
+FROM customer
+LIMIT 100 OFFSET 100;
 
+/* ORDER BY statement
+	Select all columns from the film table and order rows by the length field in ascending order. */
+SELECT *
+FROM film
+ORDER BY length;
 
+/* Select all distinct ratings from the film table ordered by rating in descending order. */
+SELECT DISTINCT(rating)
+FROM film
+ORDER BY rating DESC;
 
+/* Select the payment date and amount columns from the payment table for the first 20 payments ordered by payment amount in descending order. */
+SELECT payment_date, amount
+FROM payment
+ORDER BY amount DESC
+LIMIT 20;
 
+/* Select the title, description, special features, length, and rental duration columns from the film table for the first 10 films with behind the scenes footage under 2 hours in length and a rental duration between 5 and 7 days, ordered by length in descending order. */
+SELECT title, description, special_features, length, rental_duration
+FROM film
+WHERE special_features LIKE '%behind the scenes%'
+AND length < 120
+AND rental_duration BETWEEN 5 AND 7
+ORDER BY length DESC
+LIMIT 10;
+
+/* JOINs
+	Select customer first_name/last_name and actor first_name/last_name columns from performing a left join between the customer and actor column on the last_name column in each table. */
+SELECT c.first_name AS customer_first_name, c.last_name AS customer_last_name, a.first_name AS actor_first_name, a.last_name As actor_last_name
+FROM customer AS c
+LEFT JOIN actor AS a ON c.last_name = a.last_name;
+
+/* Select the customer first_name/last_name and actor first_name/last_name columns from performing a /right join between the customer and actor column on the last_name column in each table. */
+SELECT c.first_name AS customer_first_name, c.last_name AS customer_last_name, a.first_name AS actor_first_name, a.last_name As actor_last_name
+FROM customer AS c
+RIGHT JOIN actor AS a ON c.last_name = a.last_name;
+
+/* Select the customer first_name/last_name and actor first_name/last_name columns from performing an inner join between the customer and actor column on the last_name column in each table. */
+SELECT c.first_name AS customer_first_name, c.last_name AS customer_last_name, a.first_name AS actor_first_name, a.last_name As actor_last_name
+FROM customer AS c
+JOIN actor AS a ON c.last_name = a.last_name;
+
+/* Select the city name and country name columns from the city table, performing a left join with the country table to get the country name column. */
+SELECT ci.city, ct.country
+FROM city AS ci
+LEFT JOIN country AS ct USING(country_id);
+
+/* Select the title, description, release year, and language name columns from the film table, performing a left join with the language table to get the "language" column. */
+SELECT f.title, f.description, f.release_year, l.name AS language
+FROM film AS f
+LEFT JOIN language AS l ON f.language_id = l.language_id;
+
+/* Select the first_name, last_name, address, address2, city name, district, and postal code columns from the staff table, performing 2 left joins with the address table then the city table to get the address and city related columns. */
+SELECT s.first_name, s.last_name, a.address, a.address2, c.city, a.district, a.postal_code
+FROM staff AS s
+LEFT JOIN address AS a ON s.address_id = a.address_id
+LEFT JOIN city AS c ON a.city_id = c.city_id;
 
 
 
